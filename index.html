@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portfolio • Ale</title>
+
+  <!-- Font Awesome per le icone social -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
+  <!-- ===== STILI ===== -->
+  <style>
+  /* -----------------------
+     VARIABILI / THEME
+     ----------------------- */
+  :root{
+    --bg: #0f0f0f;
+    --panel: #1a1a1a;
+    --muted: #2a2a2a;
+    --text: #eaeaea;
+    --accent: #59f100; /* giallo primary */
+    --accent-strong: #41ad03;
+    --youtube: #ff0000;
+    --tiktok: #000000;
+    --discord: #7289DA;
+    --telegram: #0088CC;
+    --github: #333333;
+
+    /* header height dinamico (sovrascritto da JS) */
+    --header-h: 120px;
+    --radius: 10px;
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  /* -----------------------
+     RESET MINIMO
+     ----------------------- */
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  img{max-width:100%;display:block}
+
+  /* -----------------------
+     LAYOUT HEADER / NAV
+     ----------------------- */
+  header.site-header{
+    position:fixed;
+    top:0;left:0;right:0;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    z-index:1200;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+
+  .header-inner{
+    width:100%;
+    max-width:1100px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+
+  .brand {
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .brand h1{
+    margin:0;
+    color:var(--accent);
+    font-size:1.15rem;
+    letter-spacing:0.6px;
+  }
+
+  /* immagine profilo piccola nell'header */
+  .brand .mini-avatar{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    overflow:hidden;
+    border:2px solid var(--accent);
+    display:inline-block;
+  }
+  .brand .mini-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* NAV */
+  nav.main-nav{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  nav.main-nav a{
+    color:var(--text);
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:0.95rem;
+    transition: background .18s, color .18s, transform .12s;
+  }
+  nav.main-nav a:hover{background:var(--glass); transform:translateY(-2px)}
+  nav.main-nav a.active{background:linear-gradient(90deg, rgba(255,215,0,0.12), rgba(255,180,0,0.06)); color:var(--accent);}
+
+  /* hamburger mobile */
+  .hamburger{
+    display:none;
+    background:transparent;
+    border:0;
+    padding:8px;
+    border-radius:8px;
+    color:var(--text);
+  }
+  .hamburger:focus{outline:2px solid rgba(255,255,255,0.06)}
+
+  /* -----------------------
+     MAIN / SECTIONS
+     ----------------------- */
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding: calc(var(--header-h) + 28px) 18px 80px;
+  }
+
+  section{
+    margin:36px 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    border-radius: var(--radius);
+    padding:22px;
+    transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .6s;
+    opacity:0;
+    transform: translateY(28px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+  section.visible{opacity:1; transform:none}
+  h2{margin:0 0 12px 0; color:var(--accent)}
+  p.lead{margin:0;color:rgba(234,234,234,0.85)}
+
+  /* -----------------------
+     HERO (CHI SONO)
+     ----------------------- */
+  .hero{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .hero .avatar{
+    width:160px;
+    height:160px;
+    border-radius:16px;
+    overflow:hidden;
+    border:3px solid var(--accent);
+    background:linear-gradient(135deg,#222,#111);
+    flex:0 0 160px;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .hero .bio{
+    flex:1 1 360px;
+  }
+  .hero .bio h3{margin:0 0 8px 0}
+  .hero .bio ul{margin:10px 0 0 0;padding:0;display:flex;gap:8px;flex-wrap:wrap;list-style:none}
+  .hero .bio ul li{background:var(--muted);padding:6px 10px;border-radius:8px;font-weight:600;color:rgba(255,255,255,0.9)}
+
+  /* -----------------------
+     SKILLS
+     ----------------------- */
+  .skills-grid{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+  .skill-chip{
+    background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    padding:8px 10px;border-radius:10px;font-weight:700;border:1px solid rgba(255,255,255,0.02)
+  }
+  .skill-chip:hover{transform:translateY(-4px);box-shadow: 0 6px 18px rgba(0,0,0,0.45)}
+
+  /* -----------------------
+     PROGETTI - CARDS
+     ----------------------- */
+  .projects-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:16px;
+    margin-top:12px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;border:1px solid rgba(255,255,255,0.03);
+  }
+  .card .title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .card h3{margin:0;font-size:1.05rem}
+  .card p{margin:0;color:rgba(234,234,234,0.88)}
+  .card .meta{font-size:0.85rem;color:rgba(234,234,234,0.6)}
+  .card .actions{display:flex;gap:8px;margin-top:6px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:800;text-decoration:none;
+  }
+  .btn.primary{background:var(--accent);color:#000}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04)}
+  .btn:focus{outline:2px solid rgba(255,255,255,0.06)}
+
+  /* -----------------------
+     SOCIAL / CONTATTI
+     ----------------------- */
+  .social-row, .contact-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+  .social-link{
+    display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:#fff;font-weight:800;text-decoration:none;
+    min-width:140px;justify-content:flex-start;
+  }
+  .social-link i{font-size:1.25rem; width:22px;text-align:center}
+
+  .social-youtube{background:var(--youtube)}
+  .social-tiktok{background:var(--tiktok); color:#f5f5f5}
+  .social-discord{background:var(--discord)}
+  .social-telegram{background:var(--telegram)}
+  .social-github{background:var(--github)}
+
+  /* aggiunta icona a sinistra con padding */
+  .social-link .label{display:inline-block}
+
+  /* -----------------------
+     FORM
+     ----------------------- */
+  form.contact-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  form.contact-form .full{grid-column:1/-1}
+  input[type="text"], input[type="email"], textarea{
+    background:var(--muted);border:1px solid rgba(255,255,255,0.02);padding:10px;border-radius:8px;color:var(--text);
+  }
+  textarea{min-height:120px;resize:vertical}
+  .submit-row{display:flex;gap:12px;align-items:center}
+  .hint{font-size:0.9rem;color:rgba(255,255,255,0.6)}
+
+  /* -----------------------
+     FOOTER
+     ----------------------- */
+  footer.site-footer{margin-top:32px;padding:18px;border-radius:10px;background:var(--panel);text-align:center;color:rgba(255,255,255,0.7)}
+
+  /* -----------------------
+     RESPONSIVE
+     ----------------------- */
+  @media(max-width:880px){
+    .hero{flex-direction:column;align-items:flex-start}
+    .avatar{width:120px;height:120px;flex:0 0 120px}
+    form.contact-form{grid-template-columns:1fr}
+    nav.main-nav{display:none}
+    .hamburger{display:inline-block}
+  }
+
+  @media(max-width:480px){
+    main{padding-left:12px;padding-right:12px}
+    .brand h1{font-size:1rem}
+  }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" role="banner" id="siteHeader" aria-label="Barra principale">
+    <div class="header-inner">
+      <div class="brand" aria-hidden="false">
+        <div class="mini-avatar" aria-hidden="true">
+          <img src="https://cdn.discordapp.com/attachments/1063106259043242017/1414185615674572810/shadowstrike.gift.gif?ex=68bea67d&is=68bd54fd&hm=63e9029cade2827d6a6896f916940ae587a3521c7879867895fb15fd1139b94b&" alt="Anto avatar">
+        </div>
+        <h1>Alessio</h1>
+      </div>
+
+      <nav class="main-nav" role="navigation" aria-label="Navigazione principale" id="mainNav">
+        <a href="#about" data-target="about">Chi sono</a>
+        <a href="#skills" data-target="skills">Skills</a>
+        <a href="#projects" data-target="projects">Progetti</a>
+        <a href="#social" data-target="social">Social</a>
+        <a href="#contact" data-target="contact">Contattami</a>
+      </nav>
+
+      <button class="hamburger" id="hamburger" aria-expanded="false" aria-controls="mobileMenu" title="Apri menu">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div id="mobileMenu" style="display:none;padding:10px 16px;">
+      <nav aria-label="Menu mobile">
+        <a href="#about" data-target="about" style="display:block;padding:8px 6px">Chi sono</a>
+        <a href="#skills" data-target="skills" style="display:block;padding:8px 6px">Skills</a>
+        <a href="#projects" data-target="projects" style="display:block;padding:8px 6px">Progetti</a>
+        <a href="#social" data-target="social" style="display:block;padding:8px 6px">Social</a>
+        <a href="#contact" data-target="contact" style="display:block;padding:8px 6px">Contattami</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="mainContent" role="main">
+
+    <!-- SEZIONE: ABOUT -->
+    <section id="about" aria-labelledby="aboutTitle">
+      <div class="hero">
+        <div class="avatar" role="img" aria-label="Foto di Anto">
+          <img src="https://cdn.discordapp.com/attachments/1063106259043242017/1414185615674572810/shadowstrike.gift.gif?ex=68bea67d&is=68bd54fd&hm=63e9029cade2827d6a6896f916940ae587a3521c7879867895fb15fd1139b94b&" alt="Anto immagine profilo">
+        </div>
+        <div class="bio">
+          <h2 id="aboutTitle">Chi sono</h2>
+          <h3>Ciao, sono <strong>Alessio</strong> — appassionato di informatica, Low-Owner Aura Studio Italia</h3>
+          <p class="lead">Sviluppo soluzioni digitali: dal web ai bot, fino ad app e strumenti personalizzati. Amo esplorare nuove tecnologie e trasformarle in progetti pratici e innovativi.</p>
+
+          <ul aria-hidden="true">
+            <li class="skill-chip">Web Dev</li>
+            <li class="skill-chip">GitHub</li>
+            <li class="skill-chip">Discord.js</li>
+            <li class="skill-chip">Design</li>
+            <li class="skill-chip">DJ</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEZIONE: SKILLS -->
+    <section id="skills" aria-labelledby="skillsTitle">
+      <h2 id="skillsTitle">Skills</h2>
+      <div class="skills-grid" role="list" aria-label="Elenco delle mie competenze">
+        <div class="skills-grid" role="list" aria-label="Elenco delle mie competenze">
+        <div class="skill-chip" role="listitem">HTML</div>
+        <div class="skill-chip" role="listitem">CSS</div>
+        <div class="skill-chip" role="listitem">JavaScript</div>
+        <div class="skill-chip" role="listitem">Discord.js</div>
+        <div class="skill-chip" role="listitem">Canva</div>
+<div class="skill-chip" role="listitem">GitHub</div>
+<div class="skill-chip" role="listitem">Python</div>
+<div class="skill-chip" role="listitem">RekordBox</div>
+      </div>
+    </section>
+
+    <!-- SEZIONE: PROGETTI -->
+    <section id="projects" aria-labelledby="projectsTitle">
+      <h2 id="projectsTitle">Progetti</h2>
+      <div class="projects-grid">
+        <div class="card">
+          <div class="title">
+            <h3>Aura Studio</h3>
+            <span class="meta">Iniziativa • 2023</span>
+          </div>
+          <p>Iniziativa sul software & app developing alla Google.</p>
+          <div class="actions">
+            <a href="https://aurastudioitalia.it/join-aura" class="btn primary"><i class="fa fa-heart"></i> Join Aura!</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="title">
+            <h3>MoonMC</h3>
+            <span class="meta">Server Mc • 2025</span>
+          </div>
+          <p>Server Minecraft con diverse modalità</p>
+          <div class="actions">
+            <a href="https://discord.gg/eJ8yTYmDzp" class="btn primary"><i class="fab fa-discord"></i>Entra nel discord</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEZIONE: SOCIAL -->
+    <section id="social" aria-labelledby="socialTitle">
+      <h2 id="socialTitle">Seguimi sui social</h2>
+      <div class="social-row">
+        <a class="social-link social-youtube" href="https://www.youtube.com/@AlexanderCasadei" target="_blank"><i class="fa-brands fa-youtube"></i><span class="label">YouTube</span></a>
+        <a class="social-link social-tiktok" href="https://www.tiktok.com/@remixmeshuptime/" target="_blank"><i class="fa-brands fa-tiktok"></i><span class="label">TikTok</span></a>
+        <a class="social-link social-discord" href="https://discord.gg/g4v6cBNE" target="_blank"><i class="fa-brands fa-discord"></i><span class="label">Discord</span></a>
+        <a class="social-link social-telegram" href="https://t.me/Alessio_Casadei" target="_blank"><i class="fa-brands fa-telegram"></i><span class="label">Telegram</span></a>
+        <a class="social-link social-github" href="https://github.com/Alexandercasadei" target="_blank"><i class="fa-brands fa-github"></i><span class="label">GitHub</span></a>
+      </div>
+    </section>
+
+   
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2025 Alessio Casadei • Tutti i diritti riservati
+  </footer>
+
+  <!-- ===== SCRIPT ===== -->
+  <script>
+    // Menu mobile toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
+      hamburger.setAttribute('aria-expanded', !expanded);
+      mobileMenu.style.display = expanded ? 'none' : 'block';
+    });
+
+    // Effetto fade-in sezioni
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(sec => observer.observe(sec));
+
+    // Form demo
+    function handleForm(event){
+      event.preventDefault();
+      alert('Grazie per avermi scritto! Il messaggio è stato inviato.');
+      document.getElementById('contactForm').reset();
+    }
+  </script>
+</body>
+  </html>
